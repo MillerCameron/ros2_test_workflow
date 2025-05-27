@@ -1,0 +1,24 @@
+{
+  "name": "ROS 2 Humble Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/root/",
+  "runArgs": [
+    "--privileged",
+    "--network=host"
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/root/ros2_humble_ws,type=bind"
+  ],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-iot.vscode-ros",
+    "ms-python.python",
+    "ms-vscode.cpptools"
+  ],
+  "remoteUser": "root"
+}
