@@ -10,35 +10,41 @@ jobs:
   build:
     runs-on: ubuntu-22.04
 
+    container:
+      image: ros:humble
+      options: --user root
+
     steps:
+      - name: Install Dependencies
+        run: |
+          apt-get update
+          apt-get install -y curl git python3-pip python3-colcon-common-extensions python3-vcstool python3-rosdep
+          rosdep init || echo "rosdep already initialized"
+          rosdep update
+
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up ROS 2 Humble
-        uses: ros-tooling/setup-ros@v0.7
-        with:
-          required-ros-distributions: humble
 
       - name: Build Colcon Workspace
         shell: bash
         run: |
           set -e
-
-          # Source ROS 2 setup
           source /opt/ros/humble/setup.bash
-
+          
           echo "Setting up workspace..."
           mkdir -p ros2_ws/src
-
-          echo "Linking packages folder into workspace..."
-          ln -sfn "$GITHUB_WORKSPACE/packages" ros2_ws/src/packages
-
+          
+          echo "Getting package name from repository..."
+          PACKAGE_NAME=$(basename "$GITHUB_WORKSPACE")
+          echo "Package name: $PACKAGE_NAME"
+          
+          echo "Linking package into workspace..."
+          ln -sfn "$GITHUB_WORKSPACE" "ros2_ws/src/$PACKAGE_NAME"
+          
           cd ros2_ws
-
           echo "Installing ROS 2 dependencies..."
-          rosdep update
           rosdep install --from-paths src --ignore-src -r -y
-
+          
           echo "Building the workspace..."
           colcon build
 
