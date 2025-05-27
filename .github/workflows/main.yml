@@ -30,21 +30,18 @@ jobs:
         run: |
           set -e
           source /opt/ros/humble/setup.bash
-          
+
           echo "Setting up workspace..."
           mkdir -p ros2_ws/src
-          
-          echo "Getting package name from repository..."
-          PACKAGE_NAME=$(basename "$GITHUB_WORKSPACE")
-          echo "Package name: $PACKAGE_NAME"
-          
-          echo "Linking package into workspace..."
-          ln -sfn "$GITHUB_WORKSPACE" "ros2_ws/src/$PACKAGE_NAME"
-          
+
+          echo "Linking packages directory into workspace..."
+          ln -sfn "$GITHUB_WORKSPACE/packages" ros2_ws/src/packages
+
           cd ros2_ws
+
           echo "Installing ROS 2 dependencies..."
-          rosdep install --from-paths src --ignore-src -r -y
-          
+          rosdep install --from-paths src/packages --ignore-src -y
+
           echo "Building the workspace..."
           colcon build
 
