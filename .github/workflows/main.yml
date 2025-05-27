@@ -1,0 +1,48 @@
+name: Build and Test ROS Packages
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up ROS 2
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          distribution: humble
+
+      - name: Build Colcon Workspace
+        shell: bash
+        run: |
+          set -e
+
+          echo "Setting up workspace..."
+          mkdir -p ros2_ws/src
+          
+          echo "Linking package into workspace..."
+          PACKAGE_NAME=$(basename "$GITHUB_WORKSPACE")
+          ln -sfn "$GITHUB_WORKSPACE" "ros2_ws/src/$PACKAGE_NAME"
+            
+          cd ros2_ws
+          colcon build 
+          ls
+          source /opt/ros/humble/setup.bash
+          
+      
+      - name: run and test
+        shell: bash
+        run: |
+          cd ros2_ws
+          source install/setup.bash
+          colcon test
+          colcon test-result --verbose
+
+
