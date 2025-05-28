@@ -13,7 +13,7 @@ using namespace std::chrono_literals;
 
 class MinimalPublisher : public rclcpp::Node
 {
-  public:324
+  public:
     MinimalPublisher()
     : Node("minimal_publisher"), count_(0)
     {
