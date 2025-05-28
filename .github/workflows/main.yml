@@ -1,11 +1,8 @@
 name: Build and Test ROS Packages
 
 on:
-  push:
-    branches: [main, master]
   pull_request:
     branches: [main, master]
-
 jobs:
   build:
     runs-on: ubuntu-22.04
